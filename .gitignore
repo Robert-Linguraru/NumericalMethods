@@ -1,0 +1,11 @@
+# Virtual environments (don’t commit these)
+.venv/
+venv/
+env/
+
+# Python cache / compiled files
+__pycache__/
+*.py[cod]
+
+# VS Code workspace settings (optional)
+.vscode/
