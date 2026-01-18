@@ -143,6 +143,7 @@ def draw_boid_arrow(screen, pos: pygame.Vector2, vel: pygame.Vector2, color, siz
 
 def main():
     pygame.init()
+    font = pygame.font.SysFont(None, 24)  
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("30 Moving Dots (Basic Setup)")
     clock = pygame.time.Clock()
@@ -159,7 +160,11 @@ def main():
     running = True
     while running:
         # clock.tick(60) tries to cap the loop at ~60 FPS.
-        dt = clock.tick(60) / 1000.0  
+        dt = clock.tick(60) / 1000.0 
+        fps = clock.get_fps()  
+        boid_count = len(dots)  
+        hud_text = f"FPS: {fps:5.1f}   Boids: {boid_count}"
+
         # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -178,6 +183,9 @@ def main():
  
         # Render game
         screen.fill(BG)
+        hud_surface = font.render(hud_text, True, (255, 255, 255))  
+        screen.blit(hud_surface, (10, 10))  
+
         # Draw arrows
         for d in dots:
             draw_boid_arrow(screen, d["pos"], d["vel"], DOT, size=12)
