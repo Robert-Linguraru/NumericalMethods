@@ -30,7 +30,7 @@ Where `dt` is the time step per frame (seconds), controlled by the PyGame clock.
 The simulation renders boids in real-time using PyGame.
 Controls:
 - R: Reset simulation
-- (Add any others you implemented, e.g., D: toggle debug circles)
+- D: toggle debug circles
 
 ## Setup
 ### Requirements
