@@ -5,7 +5,16 @@ import pygame
 WIDTH, HEIGHT = 900, 600
 NUM_DOTS = 30
 DOT_RADIUS = 4
-MAX_SPEED = 180  
+MAX_SPEED = 180
+VISION_RADIUS = 70
+SEPARATION_RADIUS = 25
+
+W_COH = 0.8
+W_ALI = 1.0
+W_SEP = 1.4
+
+MAX_FORCE = 120  # steering strength limit
+
 
 BG = (15, 15, 20)
 DOT = (220, 220, 235)
