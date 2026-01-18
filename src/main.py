@@ -100,6 +100,13 @@ def boids_acceleration(i: int, dots: list) -> pygame.Vector2:
             
     return acc
 
+def reset_sim():
+    boids = []
+    for _ in range(NUM_DOTS):
+        pos = pygame.Vector2(random.uniform(0, WIDTH), random.uniform(0, HEIGHT))
+        vel = random_velocity(MAX_SPEED)  # or your current init velocity
+        boids.append({"pos": pos, "vel": vel})
+    return boids
 
 def bounce_off_walls(pos: pygame.Vector2, vel: pygame.Vector2, w: int, h: int, r: int):
     # Left wall
@@ -150,14 +157,11 @@ def main():
 
     # 'dots' will be a list of dictionaries.
     # Each dictionary stores a dot's position and velocity as 2D vectors.
-    dots = []
-    for _ in range(NUM_DOTS):
-        pos = pygame.Vector2(random.uniform(0, WIDTH), random.uniform(0, HEIGHT))
-        vel = random_velocity(MAX_SPEED)
-        #store dots case
-        dots.append({"pos": pos, "vel": vel})
+    dots = reset_sim()
     # Main Loop
     running = True
+    show_debug = False
+
     while running:
         # clock.tick(60) tries to cap the loop at ~60 FPS.
         dt = clock.tick(60) / 1000.0 
@@ -169,6 +173,12 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+            elif event.type == pygame.KEYDOWN:  
+                if event.key == pygame.K_r:     # Press R to reset
+                    dots = reset_sim()
+                elif event.key == pygame.K_d:   # Press D to toggle debug circles
+                    show_debug = not show_debug
 
         # Physics game
         for i, d in enumerate(dots):
@@ -189,6 +199,13 @@ def main():
         # Draw arrows
         for d in dots:
             draw_boid_arrow(screen, d["pos"], d["vel"], DOT, size=12)
+
+        if show_debug:
+                #Show Debug Circles
+            for d in dots:
+                pygame.draw.circle(screen, (80, 120, 255), (int(d["pos"].x), int(d["pos"].y)), VISION_RADIUS, 1)      
+                pygame.draw.circle(screen, (255, 120, 80), (int(d["pos"].x), int(d["pos"].y)), SEPARATION_RADIUS, 1)
+        
         pygame.display.flip()
 
     pygame.quit()
