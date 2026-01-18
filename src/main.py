@@ -78,6 +78,25 @@ def boids_acceleration(i: int, dots: list) -> pygame.Vector2:
 
     acc = pygame.Vector2(0, 0)
     #Adding Cohesion, Alignment and Separation
+    if count > 0:
+        # Alignment: match average velocity direction
+        avg_vel = align_sum / count
+        if avg_vel.length_squared() > 0:
+            desired = avg_vel.normalize() * MAX_SPEED
+            acc += W_ALI * steer_towards(vel, desired, MAX_FORCE)
+
+        # Cohesion: go toward average position
+        center = cohesion_sum / count
+        desired_dir = center - pos
+        if desired_dir.length_squared() > 0:
+            desired = desired_dir.normalize() * MAX_SPEED
+            acc += W_COH * steer_towards(vel, desired, MAX_FORCE)
+
+    if sep_count > 0:
+        # Separation: steer away from close neighbours
+        if separation_sum.length_squared() > 0:
+            desired = separation_sum.normalize() * MAX_SPEED
+            acc += W_SEP * steer_towards(vel, desired, MAX_FORCE)
     return acc
 
 def bounce_off_walls(pos: pygame.Vector2, vel: pygame.Vector2, w: int, h: int, r: int):
