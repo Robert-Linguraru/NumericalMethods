@@ -5,7 +5,7 @@ import pygame
 WIDTH, HEIGHT = 900, 600
 NUM_DOTS = 30
 DOT_RADIUS = 4
-MAX_SPEED = 180
+MAX_SPEED = 200
 VISION_RADIUS = 70
 SEPARATION_RADIUS = 25
 
@@ -24,14 +24,14 @@ def random_velocity(max_speed: float) -> pygame.Vector2:
     #Create a random 2D velocity vector (direction + magnitude).
     #- We start with a random direction.
     #- Then normalize it to length 1 (unit vector).
-    #- Then multiply it by a random speed (between ~30% and 100% of max_speed).
+    #- Then multiply it by a random speed (between ~50% and 100% of max_speed).
     
     v = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
     # Edge Case if = 0
     if v.length_squared() == 0:
         v = pygame.Vector2(1, 0)
      # Not all dots move at the same speed
-    v = v.normalize() * random.uniform(max_speed * 0.3, max_speed)
+    v = v.normalize() * random.uniform(max_speed * 0.5, max_speed)
     return v
 
 def clamp_length(v: pygame.Vector2, max_len: float) -> pygame.Vector2:
@@ -120,6 +120,26 @@ def bounce_off_walls(pos: pygame.Vector2, vel: pygame.Vector2, w: int, h: int, r
         pos.y = h - r
         vel.y = -abs(vel.y)         
 
+def draw_boid_arrow(screen, pos: pygame.Vector2, vel: pygame.Vector2, color, size=10):
+    # If velocity is zero, gives it a default position
+    if vel.length_squared() == 0:
+        vel = pygame.Vector2(1, 0)
+
+    # Calculates angle to velocity direction
+    angle = pygame.Vector2(1, 0).angle_to(vel)  
+
+    # Define triangle points
+    local_points = [
+        pygame.Vector2(size, 0),        
+        pygame.Vector2(-size * 0.6,  size * 0.4),  
+        pygame.Vector2(-size * 0.6, -size * 0.4),  
+    ]
+
+    # Rotates triangle to face the direction its going
+    points = [(pos + p.rotate(angle)) for p in local_points]  
+
+    pygame.draw.polygon(screen, color, points)  
+
 
 def main():
     pygame.init()
@@ -156,29 +176,11 @@ def main():
 
             bounce_off_walls(d["pos"], d["vel"], WIDTH, HEIGHT, DOT_RADIUS)
  
-
-            
-
-        if d["pos"].x <= DOT_RADIUS:
-            d["pos"].x = DOT_RADIUS
-            d["vel"].x *= -1  
-        elif d["pos"].x >= WIDTH - DOT_RADIUS:
-            d["pos"].x = WIDTH - DOT_RADIUS
-            d["vel"].x *= -1  
-
-        if d["pos"].y <= DOT_RADIUS:
-            d["pos"].y = DOT_RADIUS
-            d["vel"].y *= -1  
-        elif d["pos"].y >= HEIGHT - DOT_RADIUS:
-            d["pos"].y = HEIGHT - DOT_RADIUS
-            d["vel"].y *= -1  
-
-
         # Render game
         screen.fill(BG)
-        # Draw dots
+        # Draw arrows
         for d in dots:
-            pygame.draw.circle(screen, DOT, (int(d["pos"].x), int(d["pos"].y)), DOT_RADIUS)
+            draw_boid_arrow(screen, d["pos"], d["vel"], DOT, size=12)
         pygame.display.flip()
 
     pygame.quit()
