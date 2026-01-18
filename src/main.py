@@ -44,6 +44,42 @@ def steer_towards(current_vel: pygame.Vector2, desired_vel: pygame.Vector2, max_
     steer = desired_vel - current_vel
     return clamp_length(steer, max_force)
 
+def boids_acceleration(i: int, dots: list) -> pygame.Vector2:
+    me = dots[i]
+    pos = me["pos"]
+    vel = me["vel"]
+
+    # Accumulators
+    align_sum = pygame.Vector2(0, 0)
+    cohesion_sum = pygame.Vector2(0, 0)
+    separation_sum = pygame.Vector2(0, 0)
+    count = 0
+    sep_count = 0
+
+    for j, other in enumerate(dots):
+        if j == i:
+            continue
+
+        offset = other["pos"] - pos
+        dist2 = offset.length_squared()
+        if dist2 == 0:
+            continue
+
+        # Neighbour within vision radius
+        if dist2 < VISION_RADIUS * VISION_RADIUS:
+            count += 1
+            align_sum += other["vel"]
+            cohesion_sum += other["pos"]
+
+            
+            if dist2 < SEPARATION_RADIUS * SEPARATION_RADIUS:
+                sep_count += 1
+                separation_sum -= offset / dist2  
+
+    acc = pygame.Vector2(0, 0)
+    #Adding Cohesion, Alignment and Separation
+    return acc
+
 def bounce_off_walls(pos: pygame.Vector2, vel: pygame.Vector2, w: int, h: int, r: int):
     # Left wall
     if pos.x < r:
