@@ -45,3 +45,15 @@ Windows (PowerShell):
 py -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+
+### Install (Git Bash on Windows)
+```bash
+# From the repo root
+py -m venv .venv
+
+# Activate the venv (Git Bash)
+source .venv/Scripts/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
