@@ -97,7 +97,9 @@ def boids_acceleration(i: int, dots: list) -> pygame.Vector2:
         if separation_sum.length_squared() > 0:
             desired = separation_sum.normalize() * MAX_SPEED
             acc += W_SEP * steer_towards(vel, desired, MAX_FORCE)
+            
     return acc
+
 
 def bounce_off_walls(pos: pygame.Vector2, vel: pygame.Vector2, w: int, h: int, r: int):
     # Left wall
@@ -144,8 +146,14 @@ def main():
                 running = False
 
         # Physics game
-        for d in dots:
+        for i, d in enumerate(dots):
+            a = boids_acceleration(i, dots)
+
+            # Euler integration
+            d["vel"] += a * dt
+            d["vel"] = clamp_length(d["vel"], MAX_SPEED)
             d["pos"] += d["vel"] * dt
+
             bounce_off_walls(d["pos"], d["vel"], WIDTH, HEIGHT, DOT_RADIUS)
  
 
